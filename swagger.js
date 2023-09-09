@@ -9,7 +9,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: "https://hmac-signature-api-a2c57b64280e.herokuapp.com",
+      url: "https://hmac-sign-api-dd934bec69bc.herokuapp.com",
       description: "Production server",
     },
   ],
