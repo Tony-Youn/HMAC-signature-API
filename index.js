@@ -5,7 +5,6 @@ const cors = require("cors");
 
 const app = express();
 // const swaggerSpec = require("./swagger");
-const port = 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -63,6 +62,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Internal Server Error" });
 });
 
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
