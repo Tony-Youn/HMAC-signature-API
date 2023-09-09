@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Endpoint to receive a secret from the client and generate a response
-app.post("/generate-signature", (req, res) => {
+app.post("/create_sign", (req, res) => {
   const clientSecret = req.body.secret;
 
   if (!clientSecret) {
