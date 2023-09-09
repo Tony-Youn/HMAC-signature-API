@@ -1,14 +1,18 @@
 const express = require("express");
 const crypto = require("crypto");
 const cors = require("cors");
+const swaggerUi = require("swagger-ui-express");
 
 const app = express();
+const swaggerSpec = require("./swagger");
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Endpoint to receive a secret from the client and generate a response
-app.post("/generate-response", (req, res) => {
+app.post("/generate-signature", (req, res) => {
   const clientSecret = req.body.secret;
 
   if (!clientSecret) {
