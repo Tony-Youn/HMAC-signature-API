@@ -1,38 +1,40 @@
-const express = require("express");
-const crypto = require("crypto");
-const cors = require("cors");
-// const swaggerUi = require("swagger-ui-express");
+import express from "express";
+import crypto from "crypto";
+import cors from "cors";
+import moment from "moment-timezone";
+import cryptoRandomString from "crypto-random-string";
 
 const app = express();
-// const swaggerSpec = require("./swagger");
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Endpoint to receive a secret from the client and generate a response
 app.post("/create_sign", (req, res) => {
-  const clientSecret = req.body.secret;
+  const { apiKey, apiSecret } = req.body;
 
-  if (!clientSecret) {
-    // If the client didn't provide a secret, respond with a 400 Bad Request status.
-    return res.status(400).json({ error: "Client secret is missing." });
+  if (!apiKey) {
+    // If the client didn't provide a clientApiKey, respond with a 400 Bad Request status.
+    return res.status(400).json({ error: "Client api key is missing." });
+  }
+
+  if (!apiSecret) {
+    // If the client didn't provide a clientApiKSecret, respond with a 400 Bad Request status.
+    return res.status(400).json({ error: "Client api secret is missing." });
   }
 
   // Generate a unique salt
-  const salt = generateRandomSalt();
+  const salt = cryptoRandomString({ length: 64 });
 
   // Get the current datetime in ISO 8601 format
-  const currentDateTime = new Date().toISOString();
-
-  // Concatenate datetime and salt
-  const dataToSign = currentDateTime + salt;
+  const currentDateTime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
 
   // Generate the HMAC signature using the client's secret as the key
-  const hmac = crypto.createHmac("sha256", clientSecret);
-  hmac.update(dataToSign);
-  const signature = hmac.digest("hex");
+  const signature = crypto
+    .createHmac("sha256", apiSecret)
+    .update(currentDateTime + salt)
+    .digest("hex");
 
   // Prepare the response
   const response = {
@@ -42,19 +44,8 @@ app.post("/create_sign", (req, res) => {
   };
 
   // Send the response to the client with a 200 OK status.
-  res.status(200).json(response);
+  return res.status(200).json(response);
 });
-
-function generateRandomSalt() {
-  const saltLength = Math.floor(Math.random() * (64 - 12 + 1)) + 12;
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let salt = "";
-  for (let i = 0; i < saltLength; i++) {
-    salt += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return salt;
-}
 
 // Error handling middleware for handling unhandled errors
 app.use((err, req, res, next) => {
