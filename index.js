@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Endpoint to receive a secret from the client and generate a response
-app.post("/create_sign", (req, res) => {
+app.get("/create_sign", (req, res) => {
   const { apiKey, apiSecret } = req.body;
 
   if (!apiKey) {
