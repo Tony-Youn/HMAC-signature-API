@@ -28,7 +28,9 @@ app.post("/create_sign", (req, res) => {
   const salt = cryptoRandomString({ length: 64 });
 
   // Get the current datetime in ISO 8601 format
-  const currentDateTime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+  const currentDateTime = moment(new Date())
+    .tz("Asia/Seoul")
+    .format("YYYY-MM-DD HH:mm:ss");
 
   // Generate the HMAC signature using the client's secret as the key
   const signature = crypto
