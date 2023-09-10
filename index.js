@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Endpoint to receive a secret from the client and generate a response
 app.get("/create_sign", (req, res) => {
-  const { apiKey, apiSecret } = req.body;
+  const { apiKey, apiSecret } = req.query;
 
   if (!apiKey) {
     // If the client didn't provide a clientApiKey, respond with a 400 Bad Request status.
